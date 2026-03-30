@@ -23,7 +23,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.robot.RobotContainer;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.CANDevices;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.VisionConstants;
@@ -32,11 +32,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.LinearAcceleration;
-import frc.robot.subsystems.LightsSys;
 
 public class SwerveSys extends SubsystemBase {
-
-    private final LightsSys lightsSys;
 
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
     NetworkTableEntry tx = table.getEntry("tx");
@@ -143,9 +140,7 @@ public class SwerveSys extends SubsystemBase {
      * <p>SwerveCmd contains 4 {@link SwerveModule}, a gyro, and methods to control the drive base and odometry.
      */
 
-    public SwerveSys(LightsSys lightsSys) {
-
-        this.lightsSys = lightsSys;
+    public SwerveSys() {
 
         // Resets the measured distance driven for each module
         frontLeftMod.resetDriveDistance();
@@ -175,8 +170,8 @@ public class SwerveSys extends SubsystemBase {
             this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             (speeds, feedforwards) -> setChassisSpeeds(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(AutoConstants.drivekP, 0, AutoConstants.drivekD), // Translation PID constants
+                    new PIDConstants(AutoConstants.rotkP, 0, AutoConstants.rotkD) // Rotation PID constants
             ),
             config, // The robot configuration
             () -> {
@@ -208,7 +203,6 @@ public class SwerveSys extends SubsystemBase {
             }
         }
       }
-      
     }
     
     /**

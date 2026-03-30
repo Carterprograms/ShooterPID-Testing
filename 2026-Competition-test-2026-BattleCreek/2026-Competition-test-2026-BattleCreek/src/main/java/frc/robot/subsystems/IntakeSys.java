@@ -63,10 +63,18 @@ public class IntakeSys extends SubsystemBase {
         rollerMtr.set(0);
     }
     
+    /**
+     * Returns the current (in amps) being drawn by the roller motor.
+     * @return The current being drawn by the roller motor in amps.
+     */
     public double getIntakeAmps() {
         return rollerMtr.getOutputCurrent();
     }
 
+    /**
+     * Returns the current temperature of the roller motor in degrees Celsius.
+     * @return The current temperature of the roller motor in degrees Celsius.
+     */
     public double getIntakeTemp() {
         return rollerMtr.getMotorTemperature();
     }

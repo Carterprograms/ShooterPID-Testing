@@ -5,15 +5,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.MutAngle;
-import edu.wpi.first.units.measure.MutAngularVelocity;
-import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.RobotContainer;
@@ -21,18 +16,13 @@ import frc.robot.util.limelight.LimelightHelpers;
 import frc.robot.Constants.CANDevices;
 import frc.robot.Constants.FieldConstants;
 
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.ResetMode;
+
 import com.revrobotics.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.FeedForwardConfig;
@@ -47,8 +37,7 @@ public class ShooterSys extends SubsystemBase {
     SparkClosedLoopController shooterController;
     SwerveSys swerveSys;
 
-    public ShooterSys(SwerveSys swerveSys) {
-        this.swerveSys = swerveSys;
+    public ShooterSys() {
         
         shooterMtr = new SparkFlex(CANDevices.shooterMtrId, MotorType.kBrushless);
         shooterEnc = shooterMtr.getEncoder();
@@ -77,14 +66,26 @@ public class ShooterSys extends SubsystemBase {
         shooterMtr.configure(shooterConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
+    /**
+     * Sets the shooter's target velocity in RPM.
+     * @param rpm The target velocity in RPM.
+     */
     public void setShooterRPM(double rpm) {
         shooterController.setSetpoint(rpm, ControlType.kVelocity);
     }
     
+    /**
+     * Sets the shooter motor output directly in volts. Use this for open-loop control (e.g., feedforward-only) and for testing.
+     * @param volts The voltage to apply to the shooter motor.
+     */
     public void setShooterVolts(Voltage volts) {
         shooterMtr.setVoltage(volts);
     }
 
+    /**
+     * Sets the shooter motor output in volts using a PID. This is useful for feedforward + PID control, where the feedforward is calculated externally and passed in as a voltage.
+     * @param volts The voltage to apply to the shooter motor.
+     */
     public void setControllerVolts(double volts){
         shooterController.setSetpoint(volts, ControlType.kVoltage);
     }
@@ -105,8 +106,19 @@ public class ShooterSys extends SubsystemBase {
         return shooterEnc.getVelocity() * 2.0 * Math.PI / 60.0;
     }
 
+    /**
+     * Returns the current voltage being applied to the shooter motor. This is useful for monitoring the control effort when using PID or feedforward control.
+     * @return The voltage being applied to the shooter motor.
+     */
+    public double getAppliedOutput() {
+        return shooterMtr.getAppliedOutput();
+    }
+
+    /**
+     * Stops the shooter motor.
+     */
     public void stop() {
-        shooterController.setSetpoint(0, ControlType.kVelocity);
+        shooterMtr.stopMotor();
     }
 
         /**
@@ -168,6 +180,10 @@ public class ShooterSys extends SubsystemBase {
         return Math.hypot(dx, dy);
     }
 
+    /**
+     * Returns the desired shooter RPM based on the distance to the hub. This uses a simple linear model (RPM = m * distance + b) where the constants were determined empirically through testing. If the X button on the operator controller is held, this overrides to a fixed RPM of 6000 in order to shoot fuel to our alliance zone.
+     * @return The desired shooter RPM.
+     */
     public double desiredRPM() {
 
         if (RobotContainer.operatorController.x().getAsBoolean()) {
@@ -179,7 +195,6 @@ public class ShooterSys extends SubsystemBase {
 
     @Override
     public void periodic() {
-
+        
     }
-    
 }

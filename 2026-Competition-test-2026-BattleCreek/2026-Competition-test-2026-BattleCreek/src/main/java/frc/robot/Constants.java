@@ -1,18 +1,12 @@
 package frc.robot;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.util.Color;
 
 public class Constants {
-
-    public static final class ButtonPanelConstants {
-        
-    }
 
     public static final class CANDevices {
         // Set these CAN ID values to the those of your robot, or change your CAN ID's to match this convention.
@@ -165,11 +159,11 @@ public class Constants {
     public static final class AutoConstants {
 
         // These drive and rotation PID constants most likely need to be tuned for better accuracy.
-        public static final double drivekP = 2.0 * 4.0; // 12.8
-        public static final double drivekD = 0.02 * 4.0; //0.0625; // .085
+        public static final double drivekP = 5;
+        public static final double drivekD = 0;
 
-        public static final double rotkP = 5.5; // 1.27
-        public static final double rotkD = 0.5; // 0.5
+        public static final double rotkP = 5;
+        public static final double rotkD = 0;
 
         public static final double maxAccelMetersPerSec = 4.7;
         public static final double maxAccelMetersPerSecSq = 3.7;
@@ -185,17 +179,6 @@ public class Constants {
 
         public static final double autoAimTurnSpeedRadPerSec = 10.0 * Math.PI;
         public static final double autoAumTurnAccelRadPerSecSq = 3.0 * Math.PI;
-
-        public static final Pose2d driveToAmpWaypoint = new Pose2d(1.83, 7.81, Rotation2d.fromDegrees(-90.0));
-        public static final Pose2d driveToAmpTargetPoint = new Pose2d(1.83, 7.61, Rotation2d.fromDegrees(-90.0));
-
-        public static final double driveToAmpMaxVelMetersPerSec = 4.0;
-        public static final double driveToAmpMaxAccelMetersPerSecSq = 3.0;
-
-        public static final double subwooferShotThreshold = 1.8;
-
-        public static final double offsetSubwooferShotThreshold = 1.0;
-
     }
 
     public class RollerConstants {
@@ -233,57 +216,10 @@ public class Constants {
 
     }
 
-    public class PivotConstants {
+    public class AgitatorConstants {
+        public static final double agitatorRPM = 1200;
 
-        public static final int stallLimitAmps = 10;
-        public static final int freeLimitAmps = 25;
-        public static final int maxRPM = 50;
-
-    }
-
-    public class LiftConstants {
-        
-        public static final int stallLimitAmps = 100;
-        public static final int freeLimitAmps = 50;
-        public static final int maxRPM = 100;
-
-    }
-
-    public class ClimberConstants {
-        public static final double gearReduction = 20.0;
-
-        public static final float climberForwardLimit = 147.0f;
-        public static final float climberReverseLimit = 0.1f;
-
-        public static final double climberSpeedFactor = 1.0;
-    }
-
-    public class SpacebarConstants {
-        public static final double gearReduction = 25.0;
-
-        public static final float spacebarForwardLimit = 5.0f;
-        public static final float spacebarReverseLimit = 0.01f;
-
-        public static final double kP = 0.015;
-        public static final double kD = 0.00025;
-        public static final double maxVelDegPerSec = 2000.0;
-        public static final double maxAccelDegPerSecSq = 1500.0;
-
-        public static final double spacebarHomeDeg = -2.0;
-        public static final double spacebarOutDeg = 200.0;
-    }
-
-    public class LightsConstants {
-        public static final Color blueAllianceColor = new Color(0, 0, 255);
-        public static final Color redAllianceColor = new Color(255, 0, 0);
-        public static final Color noAllianceColor = new Color(200, 255, 200);
-
-        public static final Color hasNoteColor = new Color(0, 255, 0);
-
-        public static final double partyModeHueIncrement = 5;
-        public static final double partyModeTranslationTimeSec = 0.05;
-
-        public static final double brightnessPercentage = 0.5;
+        public static final int maxRPM = 5676;
     }
 
     public class VisionConstants {

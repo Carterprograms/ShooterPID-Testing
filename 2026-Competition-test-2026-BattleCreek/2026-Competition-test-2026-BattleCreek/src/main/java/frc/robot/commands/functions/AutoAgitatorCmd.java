@@ -2,6 +2,7 @@ package frc.robot.commands.functions;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.AgitatorConstants;
 import frc.robot.subsystems.AgitatorSys;
 
 public class AutoAgitatorCmd extends Command {
@@ -10,7 +11,7 @@ public class AutoAgitatorCmd extends Command {
     private final Timer timer;
     private final double duration; // seconds
     private static final double START_DELAY = 0.5; // seconds
-    private boolean started = false;
+    boolean started;
 
     public AutoAgitatorCmd(AgitatorSys agitatorSys, double duration) {
         this.agitatorSys = agitatorSys;
@@ -29,7 +30,7 @@ public class AutoAgitatorCmd extends Command {
     public void execute() {
         // Wait START_DELAY seconds before starting the agitator
         if (timer.hasElapsed(START_DELAY)) {
-            agitatorSys.setAgitatorRPM(false);
+            agitatorSys.setAgitatorRPM(AgitatorConstants.agitatorRPM, false);
             started = true;
         }
     }

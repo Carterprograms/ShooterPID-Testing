@@ -22,16 +22,13 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveSys;
 import frc.robot.util.limelight.LimelightHelpers;
-import frc.robot.subsystems.SwerveRotation;
 import frc.robot.subsystems.AgitatorSys;
 import frc.robot.subsystems.ShooterSys;
 import frc.robot.subsystems.IntakeSys;
-import frc.robot.subsystems.LightsSys;
 
 import frc.robot.commands.drivetrain.ArcadeDriveCmd;
 import frc.robot.commands.drivetrain.LockCmd;
-import frc.robot.commands.drivetrain.PointCmd;
-import frc.robot.commands.drivetrain.AimToHeadingCmd;
+import frc.robot.commands.drivetrain.AlignToTrench;
 import frc.robot.commands.functions.AgitatorCmd;
 import frc.robot.commands.functions.AutoAimCmd;
 import frc.robot.commands.functions.AutoShootCmd;
@@ -45,23 +42,20 @@ public class RobotContainer {
     // Initialize subsystems.
     private final IntakeSys intakeSys = new IntakeSys();
     private final AgitatorSys agitatorSys = new AgitatorSys();
-    private final LightsSys lightsSys = new LightsSys();
-    private final SwerveSys swerveSys = new SwerveSys(lightsSys);
-    private final SwerveRotation swerveRotation = new SwerveRotation(swerveSys);
-    private final ShooterSys shooterSys = new ShooterSys(swerveSys);
+    private final SwerveSys swerveSys = new SwerveSys();
+    private final ShooterSys shooterSys = new ShooterSys();
 
     //Initialize joysticks.
     public final static CommandXboxController driverController = new CommandXboxController(ControllerConstants.driverGamepadPort);
     public final static CommandXboxController operatorController = new CommandXboxController(ControllerConstants.operatorGamepadPort);
 
     //Name Commands
-    PointCmd pointCmd;
     AutoShootCmd testCmd;
     AutoAimCmd autoPointCmd;
     RunShooterFFCmd runShooterFFCmd;
     IntakeCmd intakeCmd;
     AgitatorCmd agitatorCmd;
-    AimToHeadingCmd aimToHeadingCmd;
+    AlignToTrench aimToHeadingCmd;
     IntakeStopCmd intakeStopCmd;
     AutoAgitatorCmd autoAgitatorCmd;
 
@@ -90,13 +84,12 @@ public class RobotContainer {
         SmartDashboard.putData("auto select", autoSelector);
 
         //Initalize Commands
-        pointCmd = new PointCmd(swerveRotation);
         testCmd = new AutoShootCmd(shooterSys, 0);
         autoPointCmd = new AutoAimCmd(swerveSys);
         runShooterFFCmd = new RunShooterFFCmd(shooterSys, 0);
         intakeCmd = new IntakeCmd(intakeSys, false);
         agitatorCmd = new AgitatorCmd(agitatorSys, false);
-        aimToHeadingCmd = new AimToHeadingCmd(swerveSys);
+        aimToHeadingCmd = new AlignToTrench(swerveSys);
         intakeStopCmd = new IntakeStopCmd(intakeSys);
         autoAgitatorCmd = new AutoAgitatorCmd(agitatorSys, 0);
             
@@ -134,7 +127,7 @@ public class RobotContainer {
         driverController.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, ControllerConstants.triggerPressedThreshhold)
            .whileTrue(new LockCmd(swerveSys));
 
-        driverController.rightTrigger().whileTrue(new AimToHeadingCmd(swerveSys));
+        driverController.rightTrigger().whileTrue(new AlignToTrench(swerveSys));
     }
 
     public Command getAutonomousCommand() {
@@ -170,7 +163,9 @@ public class RobotContainer {
         SmartDashboard.putNumber("drive voltage", swerveSys.getAverageDriveVoltage());
 
         SmartDashboard.putNumber("Shooter RPM", shooterSys.getShooterRPM());
+        SmartDashboard.putNumber("Comanded vs. Actual Shooter RPM", shooterSys.getShooterRPM() - shooterSys.desiredRPM());
         SmartDashboard.putNumber("Desired Shooter RPM", shooterSys.desiredRPM());
+        SmartDashboard.putNumber("Control Effort (Volts)", shooterSys.getAppliedOutput());
         SmartDashboard.putNumber("Limelight TY", LimelightHelpers.getTY(VisionConstants.LimelightName));
 
         SmartDashboard.putNumber("IntakeAmps", intakeSys.getIntakeAmps());
@@ -181,6 +176,7 @@ public class RobotContainer {
 
         SmartDashboard.putNumber("Speed X", swerveSys.getFieldRelativeVelocity().getX());
         SmartDashboard.putNumber("Speed Y", swerveSys.getFieldRelativeVelocity().getY());
+
 
     }   
 }

@@ -8,11 +8,13 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANDevices;
+import frc.robot.Constants.AgitatorConstants;
 
 public class AgitatorSys extends SubsystemBase {
     
     private final SparkMax agitatorMtr;
     private final RelativeEncoder agitatorEnc;
+    private final double maxRPM = AgitatorConstants.maxRPM;
 
     public AgitatorSys () {
 
@@ -34,11 +36,12 @@ public class AgitatorSys extends SubsystemBase {
     /**
      * Sets the agitator motor to the specified RPM. Positive RPMs should intake balls, while negative RPMs should outtake balls.
      */
-    public void setAgitatorRPM(boolean reverse) {
+    public void setAgitatorRPM(double rpm, boolean reverse) {
+        double mtrSpeed = rpm / maxRPM;
         if(reverse == true) {
-            agitatorMtr.set(-0.45);
+            agitatorMtr.set(-mtrSpeed);
         }else{
-            agitatorMtr.set(0.45);
+            agitatorMtr.set(mtrSpeed);
         }
     }
 

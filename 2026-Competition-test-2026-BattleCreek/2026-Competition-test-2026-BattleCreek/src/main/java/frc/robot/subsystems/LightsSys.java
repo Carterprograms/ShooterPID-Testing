@@ -8,19 +8,17 @@ import java.util.Optional;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.ctre.phoenix6.controls.RainbowAnimation;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.controls.SolidColor;
 import com.ctre.phoenix6.hardware.CANdle;
-import com.ctre.phoenix6.signals.AnimationDirectionValue;
 import com.ctre.phoenix6.signals.RGBWColor;
 
 /**
  * Subsystem that controls an addressable LED strip using a CANdle.
  */
+@SuppressWarnings("unused")
 public class LightsSys extends SubsystemBase {
     private final CANBus kCANBus = new CANBus("CANivore");
     private final CANdle m_candle = new CANdle(17, kCANBus);
@@ -48,23 +46,6 @@ public class LightsSys extends SubsystemBase {
      */
     public Command updateLEDs() {
         return run(() -> {
-              /*if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-                for (var solidColor : underglowRed) {
-                m_candle.setControl(solidColor);
-              }
-              } else {
-                for (var solidColor : underglowbBlue) {
-                m_candle.setControl(solidColor);
-              }
-            }
-               if (isTransition()) {
-
-               } else if (isHubActive()) {
-
-               } else {
-                
-               }*/
-
              if (isHubActive()) {
               for (var solidColor : White) {
                     m_candle.setControl(solidColor);
@@ -83,7 +64,11 @@ public class LightsSys extends SubsystemBase {
         });
     }
 
-
+  /**
+   * Determines if the hub is active based on the current match state and game data.
+   * The hub is active during autonomous, and during teleop it shifts between active and inactive based on the match time and which alliance won autonomous.
+   * @return true if the hub is active, false otherwise.
+   */
 	public boolean isHubActive() {
   Optional<Alliance> alliance = DriverStation.getAlliance();
   // If we have no alliance, we cannot be enabled, therefore no hub.
