@@ -1,0 +1,10 @@
+{
+  "download": {
+    "deleteAfter": false,
+    "localDir": "C:\\Users\\hsrob\\Downloads\\ShooterPIDTEST",
+    "serverTeam": "5462"
+  },
+  "output": {
+    "outputFolder": "C:\\Users\\hsrob\\Downloads"
+  }
+}
