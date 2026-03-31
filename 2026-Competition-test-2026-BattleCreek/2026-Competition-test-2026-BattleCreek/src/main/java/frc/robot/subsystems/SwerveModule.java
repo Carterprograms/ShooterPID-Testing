@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.FeedForwardConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.FeedbackSensor;
@@ -62,6 +63,12 @@ public class SwerveModule extends SubsystemBase {
         steerController = steerMtr.getClosedLoopController();
         driveController = driveMtr.getClosedLoopController();
 
+        FeedForwardConfig ffConfig = new FeedForwardConfig();
+        ffConfig
+            .kS(DriveConstants.ksVolts)
+            .kV(DriveConstants.kvVoltSecsPerMeter)
+            .kA(DriveConstants.kaVoltSecsPerMeterSq);
+
         SparkFlexConfig driveConfig = new SparkFlexConfig();
         driveConfig 
             .inverted(false)
@@ -82,7 +89,8 @@ public class SwerveModule extends SubsystemBase {
             .positionConversionFactor(DriveConstants.steerRadiansPerEncRev);
         steerConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(DriveConstants.steerkP, 0, DriveConstants.steerkD);
+            .pid(DriveConstants.steerkP, 0, DriveConstants.steerkD)
+            .apply(ffConfig);
 
         driveMtr.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         steerMtr.configure(steerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -209,7 +217,7 @@ public class SwerveModule extends SubsystemBase {
             driveMtr.set(desiredState.speedMetersPerSecond / DriveConstants.freeMetersPerSecond);
         }
         else {
-            driveController.setSetpoint(0.0,ControlType.kPosition);
+            driveController.setSetpoint(desiredState.speedMetersPerSecond, ControlType.kVelocity);
         }
     }
 
